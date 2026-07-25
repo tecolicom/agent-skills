@@ -198,6 +198,25 @@ NFC/NFD mismatches.
 -C N      # show N blocks of context (with -p: surrounding paragraphs)
 ```
 
+### head/tail by block, not by line
+
+`-m` selects which matched blocks to print, counting in whatever unit
+the block options define.  `head`/`tail` cannot do this — they only
+count lines:
+
+```sh
+GREPLE_NORC=1 greple -p -m 3 PATTERN FILE       # first 3 matching paragraphs
+GREPLE_NORC=1 greple -p -m 0,-3 PATTERN FILE    # last 3 matching paragraphs
+GREPLE_NORC=1 greple --block '^sub\s+\w+.*\n(?:.*\n)*?^\}\n' -m 0,-2 PATTERN FILE
+                                                 # last 2 matching functions
+```
+
+Forms: `-m N` first N, `-m 0,-N` last N, `-m 0,N` drop first N,
+`-m -N` drop last N.  Counts apply per file.
+
+A real pattern is required — with `--need=0` and an empty pattern the
+whole file becomes a single block and `-m` has nothing to count.
+
 ### Searching for many literal strings at once (-Mxp)
 
 To search for a list of literal strings — code fragments, symbol names,
