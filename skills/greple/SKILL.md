@@ -102,6 +102,21 @@ GREPLE_NORC=1 greple -Mdig PATTERN --git       # search git-managed files
 GREPLE_NORC=1 greple -Mdig PATTERN --dig DIR   # find-based; skips binaries and artifacts
 ```
 
+Restrict by file type with `-Mtype` (`cpanm -n App::Greple::type`;
+bundled with the Homebrew app-greple formula):
+
+```sh
+GREPLE_NORC=1 greple -Mdig -Mtype --perl PATTERN --dig .      # Perl files only
+GREPLE_NORC=1 greple -Mdig -Mtype --no-perl PATTERN --dig .   # everything except Perl
+```
+
+Types cover most languages (`--python`, `--go`, `--rust`, `--js`, …;
+`--type-NAME` is the long form).  Unlike extension-based filters, these
+also match by `#!` line, so extensionless scripts are found.  For
+ad-hoc conditions, `-Mselect` provides the underlying primitives
+(`--suffix=pl,pm`, `--shebang=perl`, `--select-name=REGEX`,
+`--select-data=REGEX`).
+
 ### Region-restricted bulk substitution (-Msubst)
 
 Unlike sed, substitution can be **combined with region restriction**
@@ -167,6 +182,24 @@ NFC/NFD mismatches.
 -o        # only the matched substrings
 -C N      # show N blocks of context (with -p: surrounding paragraphs)
 ```
+
+### Searching for many literal strings at once (-Mxp)
+
+To search for a list of literal strings — code fragments, symbol names,
+anything full of regex metacharacters — put them in a file, one per
+line, and let `-Mxp` treat them as fixed strings.  No escaping needed
+(`cpanm -n App::Greple::xp`; bundled with the Homebrew app-greple
+formula):
+
+```sh
+printf '$self->{need}\n@ARGV\n' > /tmp/literals.txt
+GREPLE_NORC=1 greple -Mxp --le-string /tmp/literals.txt -l FILES
+```
+
+`--le-pattern FILE` does the same but treats each line as a regex, and
+`#` comments are allowed there.  Region options have file-based forms
+too (`--inside-pattern`, `--exclude-string`, …).  greple's built-in
+`-f FILE` also reads patterns from a file, but only as regexes.
 
 ### Machine-readable structured output (TSV / JSON Lines)
 
