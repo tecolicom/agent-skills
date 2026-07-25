@@ -1,6 +1,6 @@
 ---
 name: greple
-description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, phrase search across line breaks (prose and Japanese text), or detecting invisible Unicode characters (zero-width, combining, bidi controls) when identical-looking strings fail to match. greple is a block-oriented grep with region control.
+description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, phrase search across line breaks (prose and Japanese text), detecting invisible Unicode characters (zero-width, combining, bidi controls) when identical-looking strings fail to match, or searching/extracting text inside Office files (docx/xlsx/pptx). greple is a block-oriented grep with region control.
 ---
 
 # greple — block-oriented grep
@@ -199,6 +199,20 @@ an input filter is applied only to files whose name matches:
 GREPLE_NORC=1 greple --if='/\.dat$/:tr A-Z a-z' needle FILES        # lowercase .dat files before search
 GREPLE_NORC=1 greple --if='/\.pdf$/:pdftotext - -' PATTERN *.pdf    # e.g. search PDFs as text
 ```
+
+### Searching Office documents directly (-Mmsdoc)
+
+Text inside docx/pptx/xlsx files can be searched directly.  Separately
+distributed module (`cpanm App::Greple::msdoc` or
+`brew install tecolicom/tap/app-greple-msdoc`).
+
+```sh
+GREPLE_NORC=1 greple -Mmsdoc PATTERN file.docx   # search docx/pptx/xlsx directly
+GREPLE_NORC=1 greple -Mmsdoc --dump file.docx    # extract full text (works as Office-to-text converter)
+```
+
+`--dump` matters for agents too: it reads Office file content as text
+without pandoc or other converters.
 
 ## Advanced: generate a task-specific module on the fly
 
