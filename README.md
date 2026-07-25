@@ -11,6 +11,7 @@ to use these tools effectively.
 |-------|------|-----------------|
 | [greple](skills/greple/SKILL.md) | [App::Greple](https://github.com/kaz-utashiro/greple) | Block-oriented search: AND search within functions/paragraphs, whole-block output, region-restricted search, cross-line phrase search |
 | [textconv](skills/textconv/SKILL.md) | [App::optex::textconv](https://github.com/kaz-utashiro/optex-textconv) | Let any command (cat, grep, diff, greple) read PDF, Office documents, and git objects as text |
+| [dozo](skills/dozo/SKILL.md) | [App::dozo](https://github.com/tecolicom/App-dozo) | Run commands inside the Docker image a project expects, with the repository mounted and paths preserved |
 
 Each skill assumes the corresponding tool is installed, via CPAN or
 Homebrew:
@@ -21,6 +22,9 @@ brew install tecolicom/tap/app-greple    # Homebrew
 
 cpanm -n App::optex App::optex::textconv          # CPAN
 brew install tecolicom/tap/app-optex-textconv     # Homebrew
+
+cpanm -n App::dozo                       # CPAN (also needs Docker)
+brew install tecolicom/tap/app-dozo      # Homebrew
 ```
 
 ## Installation
