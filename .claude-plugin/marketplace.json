@@ -10,6 +10,12 @@
       "source": "./skills/greple",
       "description": "Block-oriented grep with region control: AND search within functions/paragraphs, whole-block output, region-restricted and cross-line phrase search",
       "version": "1.0.0"
+    },
+    {
+      "name": "textconv",
+      "source": "./skills/textconv",
+      "description": "Let any command (cat, grep, diff, greple) read PDF, Office documents, and git objects as text via optex -Mtextconv",
+      "version": "1.0.0"
     }
   ]
 }

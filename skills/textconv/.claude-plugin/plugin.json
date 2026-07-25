@@ -1,0 +1,9 @@
+{
+  "name": "textconv",
+  "description": "Let any command (cat, grep, diff, greple) read PDF, Office documents, and git objects as text via optex -Mtextconv",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kazumasa Utashiro",
+    "email": "kaz@utashiro.com"
+  }
+}

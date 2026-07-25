@@ -214,6 +214,10 @@ GREPLE_NORC=1 greple -Mmsdoc --dump file.docx    # extract full text (works as O
 `--dump` matters for agents too: it reads Office file content as text
 without pandoc or other converters.
 
+For PDF, git objects, and other formats beyond Office XML, use
+`optex -Mtc greple ...` instead — it applies the same conversion to any
+command.  See the `textconv` skill.
+
 ## Advanced: generate a task-specific module on the fly
 
 When the same search conditions are reused, generate a module in a
