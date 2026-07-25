@@ -122,6 +122,19 @@ GREPLE_NORC=1 greple -Msubst --dictdata $'foo bar\nbaz qux\n' --diff FILE       
 - **Always preview with `--diff` before running `--replace`**.  Avoid
   `--overwrite`, which keeps no backup
 
+When the replacement is not a literal string (uppercasing,
+backreferences, computed transforms), use `-Mupdate` instead: the
+`--cm 'sub{...}'` function is called with the matched string in `$_`
+and its return value becomes the replacement:
+
+```sh
+GREPLE_NORC=1 greple -Mupdate PATTERN --cm 'sub{uc}' --diff FILE                  # uppercase
+GREPLE_NORC=1 greple -Mupdate 'colou?r' --cm 'sub{s/colou(r)/COLO_$1/r}' --diff FILE  # backreference
+```
+
+Preview with `--diff`, write with `--update` (`--with-backup` keeps a
+.bak copy).  Composes with region restriction (`-Mperl --comment` etc.).
+
 ### Inspecting invisible and Unicode characters (-Mcharcode / -Mcc)
 
 When identical-looking strings fail to match, or a diff looks empty yet
