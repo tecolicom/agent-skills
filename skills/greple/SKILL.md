@@ -23,7 +23,7 @@ use it when it suffices.  greple wins in these situations:
 ## Prerequisites and caveats
 
 - Check availability with `greple --version` (fall back to plain grep if
-  absent; install with `cpanm App::Greple` or
+  absent; install with `cpanm -n App::Greple` or
   `brew install tecolicom/tap/app-greple`)
 - **Always prefix commands with `GREPLE_NORC=1`** to neutralize the
   user's `~/.greplerc` (which may force `--color=always` etc.) and keep
@@ -106,7 +106,7 @@ GREPLE_NORC=1 greple -Mdig PATTERN --dig DIR   # find-based; skips binaries and 
 
 Unlike sed, substitution can be **combined with region restriction**
 (e.g. unify terminology only inside comments).  Separately distributed
-module (`cpanm App::Greple::subst`; bundled with the Homebrew
+module (`cpanm -n App::Greple::subst`; bundled with the Homebrew
 app-greple formula).
 
 ```sh
@@ -140,7 +140,7 @@ Preview with `--diff`, write with `--update` (`--with-backup` keeps a
 When identical-looking strings fail to match, or a diff looks empty yet
 differs, suspect invisible characters (zero-width spaces, combining
 characters, bidi controls) and visualize them with `-Mcc`.  Requires
-the separately distributed module: `cpanm App::Greple::charcode` or
+the separately distributed module: `cpanm -n App::Greple::charcode` or
 `brew install tecolicom/tap/app-greple-charcode`.
 
 ```sh
@@ -203,7 +203,7 @@ GREPLE_NORC=1 greple --if='/\.pdf$/:pdftotext - -' PATTERN *.pdf    # e.g. searc
 ### Searching Office documents directly (-Mmsdoc)
 
 Text inside docx/pptx/xlsx files can be searched directly.  Separately
-distributed module (`cpanm App::Greple::msdoc` or
+distributed module (`cpanm -n App::Greple::msdoc` or
 `brew install tecolicom/tap/app-greple-msdoc`).
 
 ```sh

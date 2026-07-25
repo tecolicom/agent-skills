@@ -15,7 +15,7 @@ Each skill assumes the corresponding tool is installed, via CPAN or
 Homebrew:
 
 ```sh
-cpanm App::Greple                        # CPAN
+cpanm -n App::Greple                     # CPAN
 brew install tecolicom/tap/app-greple    # Homebrew
 ```
 
