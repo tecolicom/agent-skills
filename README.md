@@ -46,6 +46,26 @@ Consult your tool's documentation for the exact skills directory:
 Gemini CLI, GitHub Copilot, Cursor, JetBrains Junie, OpenCode,
 OpenHands, and others support the format.
 
+## Design policy
+
+Recipes are selected by what they add to an agent's own abilities:
+
+- **Include** features that let an agent do what it cannot do by
+  itself: block-oriented search, region-restricted matching,
+  invisible-character detection, reading Office files
+- **Include** features that collapse many search-and-read round-trips
+  into one command: co-occurrence (AND) search, printing the whole
+  function or section containing a match
+- **Include** interfaces that are tedious for humans but natural for
+  agents, such as inline Perl functions (`--cm 'sub{...}'`,
+  `--callback`) and machine-readable output — agents generate these
+  without friction
+- **Exclude** features that duplicate what an LLM agent already does
+  natively (e.g. translation modules that call an LLM backend)
+
+Every recipe in these skills is verified against the actual tools
+before being documented.
+
 ## License
 
 MIT
