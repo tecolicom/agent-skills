@@ -168,6 +168,38 @@ NFC/NFD mismatches.
 -C N      # show N blocks of context (with -p: surrounding paragraphs)
 ```
 
+### Machine-readable structured output (TSV / JSON Lines)
+
+Each match can be emitted as a structured record with file name,
+character offsets, and matched string — useful when post-processing
+results with scripts.  `--callback` receives `__file__`/`start`/`end`/
+`index`/`match` per match and its return value replaces the matched
+string; combined with `-h -o`, only the return values are printed,
+one per line:
+
+```sh
+# TSV: file<TAB>start<TAB>end<TAB>match
+GREPLE_NORC=1 greple -h -o --callback 'sub{my %a=@_; sprintf("%s\t%d\t%d\t%s", $a{"__file__"}, $a{start}, $a{end}, $a{match})}' PATTERN FILES
+
+# JSON Lines
+GREPLE_NORC=1 greple -h -o --callback 'sub{my %a=@_; require JSON::PP; JSON::PP->new->canonical->encode({file=>$a{"__file__"}, start=>0+$a{start}, end=>0+$a{end}, match=>$a{match}})}' PATTERN FILES
+```
+
+`start`/`end` are character offsets from the beginning of the file
+(not line numbers).  If line numbers suffice, plain `-n` output is
+simpler.
+
+### Transparent search in compressed and non-text files (--if)
+
+`.gz`/`.Z` files are decompressed before search by default
+(`greple needle data.txt.gz` just works).  With `--if='REGEX:command'`
+an input filter is applied only to files whose name matches:
+
+```sh
+GREPLE_NORC=1 greple --if='/\.dat$/:tr A-Z a-z' needle FILES        # lowercase .dat files before search
+GREPLE_NORC=1 greple --if='/\.pdf$/:pdftotext - -' PATTERN *.pdf    # e.g. search PDFs as text
+```
+
 ## Advanced: generate a task-specific module on the fly
 
 When the same search conditions are reused, generate a module in a
