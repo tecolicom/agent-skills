@@ -102,6 +102,26 @@ GREPLE_NORC=1 greple -Mdig PATTERN --git       # search git-managed files
 GREPLE_NORC=1 greple -Mdig PATTERN --dig DIR   # find-based; skips binaries and artifacts
 ```
 
+### Region-restricted bulk substitution (-Msubst)
+
+Unlike sed, substitution can be **combined with region restriction**
+(e.g. unify terminology only inside comments).  Separately distributed
+module (`cpanm App::Greple::subst`; bundled with the Homebrew
+app-greple formula).
+
+```sh
+GREPLE_NORC=1 greple -Msubst --dictpair 'colou?r' color --diff FILE     # preview as diff
+GREPLE_NORC=1 greple -Msubst --dictpair 'colou?r' color --replace FILE  # apply (original saved as .bak)
+GREPLE_NORC=1 greple -Mperl -Msubst --comment --dictpair OLD NEW --diff FILE.pm   # comment lines only
+GREPLE_NORC=1 greple -Msubst --dictdata $'foo bar\nbaz qux\n' --diff FILE         # multiple pairs at once
+```
+
+- The replacement is given directly with `--dictpair PATTERN REPLACEMENT`
+- Correction semantics: matches already equal to the replacement are
+  left untouched (`colou?r`→`color` does not touch `color`)
+- **Always preview with `--diff` before running `--replace`**.  Avoid
+  `--overwrite`, which keeps no backup
+
 ### Inspecting invisible and Unicode characters (-Mcharcode / -Mcc)
 
 When identical-looking strings fail to match, or a diff looks empty yet
