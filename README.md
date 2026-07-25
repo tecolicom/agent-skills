@@ -11,8 +11,13 @@ to use these tools effectively.
 |-------|------|-----------------|
 | [greple](skills/greple/SKILL.md) | [App::Greple](https://github.com/kaz-utashiro/greple) | Block-oriented search: AND search within functions/paragraphs, whole-block output, region-restricted search, cross-line phrase search |
 
-Each skill assumes the corresponding tool is installed
-(e.g. `cpanm App::Greple`).
+Each skill assumes the corresponding tool is installed, via CPAN or
+Homebrew:
+
+```sh
+cpanm App::Greple                        # CPAN
+brew install tecolicom/tap/app-greple    # Homebrew
+```
 
 ## Installation
 

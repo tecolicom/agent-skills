@@ -23,7 +23,8 @@ use it when it suffices.  greple wins in these situations:
 ## Prerequisites and caveats
 
 - Check availability with `greple --version` (fall back to plain grep if
-  absent; install with `cpanm App::Greple`)
+  absent; install with `cpanm App::Greple` or
+  `brew install tecolicom/tap/app-greple`)
 - **Always prefix commands with `GREPLE_NORC=1`** to neutralize the
   user's `~/.greplerc` (which may force `--color=always` etc.) and keep
   behavior reproducible.  Without an rc file, color defaults to `auto`,
@@ -106,7 +107,8 @@ GREPLE_NORC=1 greple -Mdig PATTERN --dig DIR   # find-based; skips binaries and 
 When identical-looking strings fail to match, or a diff looks empty yet
 differs, suspect invisible characters (zero-width spaces, combining
 characters, bidi controls) and visualize them with `-Mcc`.  Requires
-the separately distributed module: `cpanm App::Greple::charcode`.
+the separately distributed module: `cpanm App::Greple::charcode` or
+`brew install tecolicom/tap/app-greple-charcode`.
 
 ```sh
 GREPLE_NORC=1 greple -Mcc -P ASCII FILE      # annotate non-ASCII chars with column and Unicode name
