@@ -1,7 +1,6 @@
 {
   "name": "dozo",
   "description": "Run commands inside the Docker image a project expects, with the repository mounted and the working directory preserved",
-  "version": "1.0.0",
   "author": {
     "name": "Kazumasa Utashiro",
     "email": "kaz@utashiro.com"
