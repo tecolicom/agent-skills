@@ -1,6 +1,6 @@
 ---
 name: greple
-description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, or phrase search across line breaks (prose and Japanese text). greple is a block-oriented grep with region control.
+description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, phrase search across line breaks (prose and Japanese text), or detecting invisible Unicode characters (zero-width, combining, bidi controls) when identical-looking strings fail to match. greple is a block-oriented grep with region control.
 ---
 
 # greple — block-oriented grep
@@ -100,6 +100,29 @@ cannot find are found by greple.  Prefer greple for document search.
 GREPLE_NORC=1 greple -Mdig PATTERN --git       # search git-managed files
 GREPLE_NORC=1 greple -Mdig PATTERN --dig DIR   # find-based; skips binaries and artifacts
 ```
+
+### Inspecting invisible and Unicode characters (-Mcharcode / -Mcc)
+
+When identical-looking strings fail to match, or a diff looks empty yet
+differs, suspect invisible characters (zero-width spaces, combining
+characters, bidi controls) and visualize them with `-Mcc`.  Requires
+the separately distributed module: `cpanm App::Greple::charcode`.
+
+```sh
+GREPLE_NORC=1 greple -Mcc -P ASCII FILE      # annotate non-ASCII chars with column and Unicode name
+GREPLE_NORC=1 greple -Mcc --outstand FILE    # combining chars and other non-ASCII at once
+GREPLE_NORC=1 greple -Mcc --ansicode FILE    # detect ANSI control sequences
+```
+
+Example output (reveals a ZERO WIDTH SPACE hidden at column 5):
+
+```
+     ┌─   5 \x{200b} name=\N{ZERO WIDTH SPACE}
+hidden​zero width
+```
+
+`--nfd`/`--nfc` display normalization forms, useful for diagnosing
+NFC/NFD mismatches.
 
 ### Output control
 
