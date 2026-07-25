@@ -41,15 +41,6 @@ brew install tecolicom/tap/app-optex-textconv     # Homebrew (pulls in app-optex
 optex -Mtc COMMAND [args...] FILE
 ```
 
-Within one shell session, a helper function shortens this (a shell
-alias in `~/.bashrc` does not apply to non-interactive commands, so
-define a function instead):
-
-```sh
-tc() { optex -Mtc "$@"; }
-tc cat report.pdf
-```
-
 ## Recipes (all verified)
 
 ### Read a document as text
