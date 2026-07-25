@@ -1,0 +1,15 @@
+{
+  "name": "tecolicom",
+  "owner": {
+    "name": "Kazumasa Utashiro",
+    "email": "kaz@utashiro.com"
+  },
+  "plugins": [
+    {
+      "name": "greple",
+      "source": "./skills/greple",
+      "description": "Block-oriented grep with region control: AND search within functions/paragraphs, whole-block output, region-restricted and cross-line phrase search",
+      "version": "1.0.0"
+    }
+  ]
+}
