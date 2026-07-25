@@ -112,10 +112,25 @@ GREPLE_NORC=1 greple -Mdig -Mtype --no-perl PATTERN --dig .   # everything excep
 
 Types cover most languages (`--python`, `--go`, `--rust`, `--js`, …;
 `--type-NAME` is the long form).  Unlike extension-based filters, these
-also match by `#!` line, so extensionless scripts are found.  For
-ad-hoc conditions, `-Mselect` provides the underlying primitives
-(`--suffix=pl,pm`, `--shebang=perl`, `--select-name=REGEX`,
-`--select-data=REGEX`).
+also match by `#!` line, so extensionless scripts are found.
+
+**Skip minified and generated files** with `-Mselect
+--x-select-longer=N`, which excludes any file containing a line longer
+than N characters:
+
+```sh
+GREPLE_NORC=1 greple -Mdig -Mselect --x-select-longer=200 PATTERN --dig .
+```
+
+This catches minified CSS/JS, bundled assets, and single-line JSON dumps
+even when the file name gives no hint (`bundle.css`, not `*.min.css`).
+Worth adding to any search that might touch build output — one matching
+line from a minified file floods the output with thousands of useless
+characters.
+
+`-Mselect` also provides the primitives behind `-Mtype` for ad-hoc
+conditions: `--suffix=pl,pm`, `--shebang=perl`, `--select-name=REGEX`,
+`--select-data=REGEX`, each with an exclusive `--x-` counterpart.
 
 ### Region-restricted bulk substitution (-Msubst)
 
