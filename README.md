@@ -68,8 +68,22 @@ Recipes are selected by what they add to an agent's own abilities:
   agents, such as inline Perl functions (`--cm 'sub{...}'`,
   `--callback`) and machine-readable output — agents generate these
   without friction
-- **Exclude** features that duplicate what an LLM agent already does
-  natively (e.g. translation modules that call an LLM backend)
+- **Include** features that protect the agent's context, such as
+  excluding minified and generated files from search results — a
+  single matching line of minified CSS floods the output with
+  thousands of useless characters
+
+Three kinds of features are deliberately left out:
+
+- **Duplicating the model's own abilities** — translation modules that
+  call an LLM backend, for instance.  An agent translates natively
+- **Saving human keystrokes** — command aliases and colorized echo.
+  Typing effort and on-screen appearance are human concerns; an agent
+  is better served by the explicit, environment-independent form
+- **Duplicating the agent's existing tools** — selecting text by line
+  number, which file-reading tools already do.  Line numbers are a
+  volatile reference anyway; agents locate code by content, not by
+  position
 
 Every recipe in these skills is verified against the actual tools
 before being documented.
