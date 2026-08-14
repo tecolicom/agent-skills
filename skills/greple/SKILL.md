@@ -49,6 +49,47 @@ GREPLE_NORC=1 greple -p -e foo -e bar FILE       # foo AND bar in one paragraph
 GREPLE_NORC=1 greple -e 'foo|bar' FILE           # OR via regex alternation
 ```
 
+**Repeating `-e` means AND, not OR.**  This is the opposite of
+`grep -e`, and it fails silently: patterns that never co-occur return
+nothing, which reads exactly like "the keywords are absent".  When the
+alternatives need different anchoring and do not merge cleanly into one
+alternation, use `-f` or `--need`:
+
+```sh
+GREPLE_NORC=1 greple -f patterns.txt FILE            # one regex per line, combined as OR
+GREPLE_NORC=1 greple -e A -e B -e C --need=1 FILE    # any 1 of the 3 is enough
+```
+
+`-f` keeps the patterns in a file, so shell quoting stops mattering for
+regexes full of backslashes and backticks; blank lines and `#` comments
+are ignored there.  There is no inline form of `-f`, but process
+substitution supplies one without writing a file:
+
+```sh
+GREPLE_NORC=1 greple -f <(printf '%s\n' '^name:' '^\s*skiprows:') FILE
+```
+
+`-t` (`--may`) is **not** an OR.  It marks a pattern as optional — to be
+highlighted where present, never required — so `-e A -t B` selects on A
+alone, and a command whose patterns are *all* `-t` requires nothing and
+matches nothing.
+
+### One-argument logic with -x / --le
+
+`-x` (`--le`) expresses the whole condition inline: tokens split on
+whitespace, `-` negates, `?` marks optional, and everything else is
+required.
+
+```sh
+GREPLE_NORC=1 greple -x 'foo -bar ?baz' FILE          # foo, not bar, highlight baz if present
+GREPLE_NORC=1 greple -x 'foo bar baz' --need=1 FILE   # any one of the three
+```
+
+Since tokens split on whitespace, a pattern containing a literal space
+must spell it `\s` (`-x 'foo\sbar'`) — otherwise it silently becomes two
+AND-ed patterns.  Reach for `-e` when the patterns are long or full of
+spaces, and `-x` when they are short words.
+
 ### Show the whole function or section containing a match
 
 ```sh
@@ -64,6 +105,20 @@ GREPLE_NORC=1 greple --border '^(?=#+ )' -e WORD1 -e WORD2 FILE
 
 Combining `--block`/`--border` with multiple `-e` options means
 "functions (sections) containing both A and B".
+
+The block pattern can describe any delimited unit, not just code — a
+fenced code block of one language, a YAML document, a log entry.  But
+**verify the block pattern matches before trusting a zero result**: a
+`--block` that matches nothing returns zero hits for every search,
+indistinguishable from "the keyword is absent".  Searching for the
+block pattern itself counts the blocks:
+
+```sh
+GREPLE_NORC=1 greple -c -e "$BLOCK" FILES   # how many blocks exist per file
+GREPLE_NORC=1 greple -l -e "$BLOCK" FILES   # which files contain any
+```
+
+Do this whenever a zero result is to be reported as a finding.
 
 ### Region-restricted search
 
@@ -127,6 +182,13 @@ even when the file name gives no hint (`bundle.css`, not `*.min.css`).
 Worth adding to any search that might touch build output — one matching
 line from a minified file floods the output with thousands of useless
 characters.
+
+**Pick N with the prose in mind.**  CJK text is frequently written
+without line wrapping, so ordinary Japanese or Chinese documents run to
+thousands of characters per line and are silently dropped from the
+search — the excluded files never appear, so the loss is invisible.
+Raise N well above the longest legitimate paragraph, or omit the option
+entirely for document trees, and reserve it for source and build output.
 
 `-Mselect` also provides the primitives behind `-Mtype` for ad-hoc
 conditions: `--suffix=pl,pm`, `--shebang=perl`, `--select-name=REGEX`,
@@ -198,6 +260,16 @@ NFC/NFD mismatches.
 -C N      # show N blocks of context (with -p: surrounding paragraphs)
 ```
 
+`-c` reports every file it scanned, including the ones with no match, so
+totalling its output requires dropping the zeros first:
+
+```sh
+GREPLE_NORC=1 greple -Mdig -c PATTERN --dig . | awk -F: '$NF > 0'
+```
+
+Reading the head of an unfiltered `-c` listing shows a run of `:0` lines
+and looks like the search never ran.
+
 ### head/tail by block, not by line
 
 `-m` selects which matched blocks to print, counting in whatever unit
@@ -233,7 +305,8 @@ GREPLE_NORC=1 greple -Mxp --le-string /tmp/literals.txt -l FILES
 `--le-pattern FILE` does the same but treats each line as a regex, and
 `#` comments are allowed there.  Region options have file-based forms
 too (`--inside-pattern`, `--exclude-string`, …).  greple's built-in
-`-f FILE` also reads patterns from a file, but only as regexes.
+`-f FILE` also reads patterns from a file, but only as regexes — and
+combines them as OR, unlike repeated `-e`.
 
 ### Machine-readable structured output (TSV / JSON Lines)
 
