@@ -46,8 +46,10 @@ plugins:
 ### Other Agent Skills-compatible tools
 
 The `SKILL.md` files follow the [Agent Skills](https://agentskills.io)
-open standard and contain no Claude-specific extensions.  Copy the
-skill directory into your tool's skills location, for example:
+open standard and contain no Claude-specific extensions.  (The
+side-by-side skill has one section on a Claude Code display hook; its
+other methods work with any agent.)  Copy the skill directory into
+your tool's skills location, for example:
 
 ```sh
 # location varies by tool; see your tool's documentation
@@ -76,6 +78,10 @@ Recipes are selected by what they add to an agent's own abilities:
   excluding minified and generated files from search results — a
   single matching line of minified CSS floods the output with
   thousands of useless characters
+- **Include** layout that the agent cannot produce correctly by
+  itself when a person has to read the result, such as two texts
+  side by side with CJK-aware folding — `column`, `paste` and
+  `fold -s` break only at spaces and misalign anything else
 
 Three kinds of features are deliberately left out:
 
