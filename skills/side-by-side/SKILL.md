@@ -194,7 +194,11 @@ picks the layout:
 The user this was built for preferred the boxed panes for texts of a
 few screens ("the frames make the two texts easier to tell apart") and
 found sdif's default colors with backgrounds hard to read; the hook
-therefore runs sdif with foreground colors only.
+therefore runs sdif with foreground colors only, a cool tone on the
+left (#9CC4E4) and a warm one on the right (#E0B48C).  With the two
+sides in different colors the areas stay distinct without any rules,
+which the user found easier to read than the boxed layouts for a
+parallel text.
 
 Setup:
 

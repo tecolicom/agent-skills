@@ -25,7 +25,7 @@
 #   SXS_MDEE         the mdee command (default: mdee from PATH)
 #   SXS_LEFT_COLOR, SXS_RIGHT_COLOR
 #                    sdif text colors (Term::ANSIColor::Concise spec;
-#                    default L22 and #E0B48C, no background)
+#                    default #9CC4E4 (left) and #E0B48C (right), no background)
 #
 # Requires jq, mdee 1.11 or later (--no-filename), nup, and sdif for the
 # sdif mode.
@@ -120,7 +120,7 @@ cm_join() {
 if [[ $method == sdif ]]; then
     out=$(cm_join "$left" "$right" |
           ANSICOLOR_NO_RESET_EL=1 sdif -V --no-filename --no-cdif --mark=no -W $(( pane * 2 )) \
-              --cm "OTEXT=${SXS_LEFT_COLOR:-L22},NTEXT=${SXS_RIGHT_COLOR:-#E0B48C}" 2>>"$log" |
+              --cm "OTEXT=${SXS_LEFT_COLOR:-#9CC4E4},NTEXT=${SXS_RIGHT_COLOR:-#E0B48C}" 2>>"$log" |
           perl -pe 's/\e\[\d*K//g')
     if [[ $out ]]; then
         printf '%s msg=%s sdif %s lines\n' "$(date +%T)" "${msg:0:8}" "$(wc -l <<<"$out" | tr -d ' ')" >> "$log"
