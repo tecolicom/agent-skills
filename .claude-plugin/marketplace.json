@@ -19,6 +19,11 @@
       "name": "dozo",
       "source": "./skills/dozo",
       "description": "Run commands inside the Docker image a project expects, with the repository mounted and the working directory preserved"
+    },
+    {
+      "name": "side-by-side",
+      "source": "./skills/side-by-side",
+      "description": "Show two texts next to each other in the terminal (original/translation, two versions) with ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, plain text in any agent's reply, or in color inside a Claude Code reply via a MessageDisplay hook"
     }
   ]
 }
