@@ -1,6 +1,6 @@
 ---
 name: dozo
-description: Use when a project expects its commands to run inside a specific Docker image rather than on the host - typically signalled by a .dozorc file in the repository. Runs any command in the project's designated container with the repository mounted and the working directory preserved, so builds, tests, and tools behave as the project intends.
+description: Use when a project expects its commands to run inside a specific Docker image rather than on the host - typically signalled by a .dozorc file in the repository. Runs any command in the project's designated container with the repository mounted and the working directory preserved, so builds, tests, and tools behave as the project intends. Its default image (currently tecolicom/xlate) also provides greple, sdif/cdif, ansicolumn, optex textconv, mecab, mdee and translation tools when they are not installed on the host.
 ---
 
 # dozo — run commands in the project's Docker environment
@@ -44,6 +44,31 @@ Check what would run without running it:
 ```sh
 dozo -B -n            # dry run: prints the full docker command and the mounts
 ```
+
+## The default image
+
+`-D` (`--default`) runs the default image instead of naming one,
+currently `tecolicom/xlate:latest`, or `DOZO_DEFAULT_IMAGE` if that is set.  A
+`-D` line in `~/.dozorc` makes it the image whenever none is given.
+
+```sh
+dozo -B -q -D greple --version
+```
+
+The image is built for document translation and text processing
+(the dozo manual, DEFAULT IMAGE, lists it).  It is a way to get the
+tecolicom tools without installing them on the host:
+
+- greple with many modules, App::Greple::xlate and its `xlate` command
+- sdif, cdif, watchdiff; ansicolumn, ansifold, ansiexpand
+- optex with textconv, pdftotext (poppler), mecab with a dictionary
+- mdee and nup (from xlate 2.03)
+- llm, deepl, gpty for translation
+
+The tools are as new as the image: it is rebuilt on each xlate
+release, so a tool released since then may be an older version inside
+(check with `--version`).  The first run downloads about 1 GB; ask
+the user before pulling it.
 
 ## What dozo sets up
 
