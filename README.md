@@ -35,6 +35,27 @@ cpanm -n App::ansicolumn App::mdee App::sdif                      # CPAN
 brew install tecolicom/tap/app-ansi-tools tecolicom/tap/app-mdee tecolicom/tap/app-sdif   # Homebrew
 ```
 
+### Without installing the tools: dozo and Docker
+
+With Docker and [dozo](skills/dozo/SKILL.md) (`cpanm -n App::dozo`,
+`brew install tecolicom/tap/app-dozo`, or the self-contained single
+file attached to each [release](https://github.com/tecolicom/App-dozo/releases)
+since 1.02, which needs only Bash 4.4+), the tools of these skills can
+run without installing them on the host.  `dozo -D` runs a command in
+dozo's default image, currently `tecolicom/xlate`, which has greple,
+optex textconv, sdif/cdif, ansicolumn, mdee, nup and mecab:
+
+```sh
+dozo -B -q -D env GREPLE_NORC=1 greple -n -e PATTERN file.md
+dozo -B -q -D optex -Mtc cat document.docx
+dozo -B -q -D env HOME=/tmp sdif -W 160 old.md new.md
+```
+
+Each skill has a short section on it.  The repository (or the current
+directory) is mounted, so files outside it are not visible, and the
+image's own settings are kept out with `HOME=/tmp` (greple:
+`GREPLE_NORC=1`).  The first run downloads about 1 GB.
+
 ## Installation
 
 ### Claude Code

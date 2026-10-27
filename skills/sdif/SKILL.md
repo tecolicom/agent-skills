@@ -44,6 +44,30 @@ Check with `sdif --version` (this skill was verified with 4.49).  For
 Japanese word units also install MeCab and a dictionary
 (`brew install mecab mecab-ipadic`); `mecab --version` checks it.
 
+### Without installing: `dozo -D`
+
+If App::sdif is not installed but Docker is, the default image of dozo
+(the dozo skill) has sdif, cdif, watchdiff and mecab with a dictionary:
+
+```sh
+dozo -B -q -D env HOME=/tmp sdif -W "$(tput cols)" old.md new.md
+dozo -B -q -D sh -c 'git diff | HOME=/tmp cdif --unit=mecab'
+```
+
+- The pipe is built inside the container (git works there on the
+  mounted repository): dozo 1.01 and earlier do not pass piped input
+  with `-B`, so `git diff | dozo -B ... cdif` works only with dozo 1.02
+  or later
+
+- `HOME=/tmp` keeps the image's own `~/.sdifrc` (`-n --margin=4`) and
+  `~/.cdifrc` (`--mecab`) out, so that the output is as described here
+- Only the git top directory (or, outside git, the current directory)
+  is mounted, at the same relative place; files elsewhere on the host,
+  such as `/tmp`, are not visible in the container
+- The tools are as new as the image (the dozo skill tells how to
+  update it), and the first run downloads about 1 GB: ask the user
+  before that
+
 ## Recipes (all verified)
 
 ```sh

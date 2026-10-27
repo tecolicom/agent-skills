@@ -55,6 +55,30 @@ Each method needs its own tool; install only what you use.
 
 Check with `ansicolumn --version`, `mdee --version`, `sdif --version`.
 
+### Without installing: `dozo -D`
+
+If the tools are not installed but Docker is, the default image of
+dozo (the dozo skill) has ansicolumn, mdee, nup, sdif and cdif:
+
+```sh
+dozo -B -q -D -E TERM env HOME=/tmp mdee -V -w "$(tput cols)" --no-pager left.md right.md
+dozo -B -q -D env HOME=/tmp ansicolumn -V -w "$(tput cols)" left.md right.md
+```
+
+- `HOME=/tmp` keeps the image's own settings out (its `~/.ansicolumnrc`
+  adds file name headers and another border, its `~/.sdifrc` line
+  numbers), so that the output is as described here
+- `-E TERM` passes the terminal type: mdee 1.12 in the image warns
+  "No value for $TERM" without it
+- Not for the MessageDisplay hook below: it would start a container
+  for every reply
+- Only the git top directory (or, outside git, the current directory)
+  is mounted, at the same relative place; files elsewhere on the host,
+  such as `/tmp`, are not visible in the container
+- The tools are as new as the image (the dozo skill tells how to
+  update it), and the first run downloads about 1 GB: ask the user
+  before that
+
 ## Width
 
 All the commands take the total output width; give them the terminal

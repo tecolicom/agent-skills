@@ -39,6 +39,24 @@ use it when it suffices.  greple wins in these situations:
 - Exit status: 0 = matched, 1 = no match.  Block output is separated by
   `--` lines
 
+### Without installing greple: `dozo -D`
+
+If greple is not installed but Docker is, the default image of dozo
+(the dozo skill) has greple with its common modules:
+
+```sh
+dozo -B -q -D env GREPLE_NORC=1 greple -n -e PATTERN file.md
+```
+
+- `GREPLE_NORC=1` matters even more there: the image's `~/.greplerc`
+  sets `--color=always`
+- Only the git top directory (or, outside git, the current directory)
+  is mounted, at the same relative place; files elsewhere on the host,
+  such as `/tmp`, are not visible in the container
+- The tools are as new as the image (the dozo skill tells how to
+  update it), and the first run downloads about 1 GB: ask the user
+  before that
+
 ## Recipes (all verified)
 
 ### AND / NOT / OR search (co-occurrence within a block)

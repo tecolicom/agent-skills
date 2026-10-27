@@ -33,6 +33,23 @@ brew install tecolicom/tap/app-optex-textconv     # Homebrew (pulls in app-optex
 - PDF support requires `pdftotext` (poppler); Office XML formats work
   with the built-in converter, no external tool needed
 
+### Without installing: `dozo -D`
+
+If optex is not installed but Docker is, the default image of dozo
+(the dozo skill) has optex with textconv and `pdftotext`:
+
+```sh
+dozo -B -q -D optex -Mtc cat document.docx
+dozo -B -q -D optex -Mtc cat paper.pdf
+```
+
+- Only the git top directory (or, outside git, the current directory)
+  is mounted, at the same relative place; files elsewhere on the host,
+  such as `/tmp`, are not visible in the container
+- The tools are as new as the image (the dozo skill tells how to
+  update it), and the first run downloads about 1 GB: ask the user
+  before that
+
 ## Usage
 
 `-Mtc` goes **before** the command name:

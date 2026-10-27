@@ -27,6 +27,18 @@ usual.  This skill is not about sandboxing.
 
 - `dozo --version`, plus a working Docker daemon
 - Install: `cpanm -n App::dozo` or `brew install tecolicom/tap/app-dozo`
+- Without installing anything but Docker and Bash 4.4+: since 1.02 each
+  GitHub release has a self-contained single file (ask the user before
+  downloading, and name the version rather than `latest`):
+
+```sh
+curl -fsSLo ~/.local/bin/dozo https://github.com/tecolicom/App-dozo/releases/download/1.02/dozo
+chmod +x ~/.local/bin/dozo
+```
+
+  The release also has `dozo.sha256`; `dozo --bundle` makes the same
+  file from an installed dozo.  macOS ships Bash 3.2, so there a newer
+  bash must come first in `PATH`
 
 ## Usage
 
@@ -38,6 +50,12 @@ progress messages:
 dozo -B -q COMMAND [args...]          # image comes from .dozorc
 dozo -B -q -I IMAGE COMMAND [args...] # or name the image explicitly
 ```
+
+Piped input: dozo 1.02 and later pass it to the command with `-B`
+too (`git diff | dozo -B -q -D cdif`); `-B` only keeps a terminal out.
+Up to 1.01, `-B` does not connect standard input at all, so the
+command gets nothing to read; there, build the pipe inside the
+container instead: `dozo -B -q sh -c 'git diff | cdif'`.
 
 Check what would run without running it:
 
