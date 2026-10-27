@@ -1,6 +1,6 @@
 ---
 name: side-by-side
-description: Use when two texts should be read next to each other in the terminal - an original and its translation (English/Japanese issue drafts, release notes, documentation), two versions of a document, or any pair of Markdown or plain-text files - and when such a pair should appear side by side inside a Claude Code reply. Offers six verified methods (ansicolumn -V, mdee -V, sdif -V with conflict markers, cdif --lxl for line pairs, plain text pasted into a code block for any agent, a Claude Code MessageDisplay hook for color) and says which to pick. Handles CJK text correctly; column/fold -s/paste do not.
+description: Use when two texts should be read next to each other in the terminal - an original and its translation (English/Japanese issue drafts, release notes, documentation), two versions of a document, or any pair of Markdown or plain-text files - and when such a pair should appear side by side inside a Claude Code reply. Offers seven verified methods (ansicolumn -V, mdee -V, sdif -V with conflict markers, cdif --lxl for line pairs, plain text pasted into a code block for any agent, a Markdown table for short pairs, a Claude Code MessageDisplay hook for color) and says which to pick. Handles CJK text correctly; column/fold -s/paste do not.
 ---
 
 # side-by-side — two texts next to each other
@@ -9,7 +9,8 @@ Showing an original and its translation, or two versions of a text, in
 two columns is a layout job that generic tools do badly: `column`,
 `paste` and `fold -s` break only at spaces, so Japanese (or any text
 without spaces) comes out as unbroken runs or is cut inside a word, and
-none of them pads by display width.  The tools below fold by display
+none of them pads by display width.  `diff -y` (`sdiff`) cuts every line
+at the column width and drops the rest.  The tools below fold by display
 width with East Asian line-breaking rules (kinsoku), so both columns
 stay aligned whatever the script.
 
@@ -21,7 +22,9 @@ stay aligned whatever the script.
 | The same, with Markdown rendered (headings, tables, code, colors) | `mdee -V` | each file fills its own pane |
 | Corresponding paragraphs on the same line (original beside its translation) | `sdif -V` on conflict-marker text | block by block |
 | Text whose lines alternate original/translation (or two line-aligned files) | `cdif --lxl --style=diff \| sdif` | line pair by line pair |
+| Two versions of the same text, a corrected draft, with what changed marked | `sdif old new` (the sdif skill) | diff: common lines beside each other, changed words marked |
 | The pair shown inside the agent's reply, with any agent | plain text in a code block (below) | as the tool used |
+| A few short pairs (terms, one sentence each) in the reply, no tool at all | a Markdown table (below) | row by row |
 | The same with colors, in Claude Code | the MessageDisplay hook (below) | each text fills its own pane |
 
 Pane-filling layouts (the first two) read best when each side is to be
@@ -44,7 +47,7 @@ Check with `ansicolumn --version`, `mdee --version`, `sdif --version`.
 
 ## Width
 
-All three commands take the total output width; give them the terminal
+All the commands take the total output width; give them the terminal
 width (`tput cols`), or less if the output goes somewhere narrower.
 Inside a Claude Code reply, at most `columns - 5` fits (the reply is
 indented and the code fence has margins); see the hook section.
@@ -151,6 +154,13 @@ cdif --lxl --style=diff --limit length=1 pairs.txt |
 This is finer than the block alignment above: every line pair starts on
 the same row, whatever the folded heights of the previous pair.
 
+### Two versions: see the sdif skill
+
+An old and a new version of the same text (a corrected draft, a
+revised document) are compared rather than laid out: plain `sdif old
+new` shows them side by side with the changed words marked, and
+`--unit=mecab` compares Japanese by word.  The sdif skill covers it.
+
 ### Inside a reply, with any agent: plain text in a code block
 
 Any of the layouts above can be put straight into a reply: run the
@@ -176,6 +186,41 @@ cm_join left.md right.md | sdif -V --no-filename --no-cdif --mark=no --no-color 
   layout falls apart
 - In parallel mode (`-V`) ansicolumn and nup size the page to the
   longer file, so no page height is needed
+
+### Inside a reply, no tool at all: a Markdown table
+
+The agent's own Markdown table is the cheapest layout, and for a few
+short pairs (a glossary, UI strings, one sentence per row) it is enough:
+one row per pair, the original in one column and the translation in the
+other.  Claude Code and other agent UIs draw such a table with aligned
+columns and do the width calculation themselves.
+
+```markdown
+| English | 日本語 |
+|---|---|
+| Release notes | リリースノート |
+| The option is ignored for a single file. | ファイルが一つのときは無視されます。 |
+```
+
+Its limits decide when to stop using it:
+
+- Cells are folded only at spaces.  Japanese text with an English word
+  or code in it is broken next to that word, leaving a short line and
+  a long one; a Japanese sentence without spaces is kept on one line
+  and makes its column as wide as itself
+- When the columns cannot get that wide, words and code may be cut in
+  the middle, without kinsoku
+- A table whose cells grow too tall or too wide is not drawn as a table
+  at all but as `Header: value` lines, where long Japanese lines are
+  left to the terminal to wrap
+- `<br>` is shown literally, so a cell cannot hold more than one
+  paragraph, and lists, code blocks and headings cannot go in a cell
+
+In practice: keep every cell to one line, the Japanese ones shorter
+than about half the terminal width, and one pair per row.
+
+For anything longer than a few lines per side, use one of the tool
+layouts above in a code block, or the hook below.
 
 ### Inside a Claude Code reply, in color: the MessageDisplay hook
 
@@ -268,9 +313,6 @@ What the script does, and why (each point cost an experiment):
   before its final batch shows nothing (its parts are swept after ten
   minutes).
 
-Markdown tables are not an alternative: Claude Code's table renderer
-folds cells only at spaces and shows `<br>` literally, so the column
-widths cannot be controlled for CJK text.
 
 ## Verify
 

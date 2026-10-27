@@ -1,6 +1,6 @@
 {
   "name": "side-by-side",
-  "description": "Show two texts next to each other in the terminal - an original and its translation, or two versions - with ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, or inside a Claude Code reply through a MessageDisplay hook; folds CJK text correctly",
+  "description": "Show two texts next to each other in the terminal - an original and its translation, or two versions - with ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, a Markdown table for short pairs, or inside a Claude Code reply through a MessageDisplay hook; folds CJK text correctly",
   "author": {
     "name": "Kazumasa Utashiro",
     "email": "kaz@utashiro.com"

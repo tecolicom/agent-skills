@@ -23,7 +23,12 @@
     {
       "name": "side-by-side",
       "source": "./skills/side-by-side",
-      "description": "Show two texts next to each other in the terminal (original/translation, two versions) with ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, plain text in any agent's reply, or in color inside a Claude Code reply via a MessageDisplay hook"
+      "description": "Show two texts next to each other in the terminal (original/translation, two versions) with ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, plain text or a Markdown table in any agent's reply, or in color inside a Claude Code reply via a MessageDisplay hook"
+    },
+    {
+      "name": "sdif",
+      "source": "./skills/sdif",
+      "description": "Word-level and side-by-side diffs with cdif, sdif and watchdiff: check a corrected draft word by word, compare Japanese by MeCab word units, read git diff output, print the word marks as text for agents"
     }
   ]
 }

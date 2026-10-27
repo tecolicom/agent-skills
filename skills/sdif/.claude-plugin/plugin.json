@@ -1,0 +1,8 @@
+{
+  "name": "sdif",
+  "description": "Word-level and side-by-side diffs with cdif, sdif and watchdiff: check a corrected draft word by word, compare Japanese by MeCab word units, read git diff output, print the word marks as text for agents",
+  "author": {
+    "name": "Kazumasa Utashiro",
+    "email": "kaz@utashiro.com"
+  }
+}
