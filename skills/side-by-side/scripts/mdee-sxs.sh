@@ -109,7 +109,17 @@ run_mdee() {
 # shows corresponding paragraphs on the same line
 cm_join() {
     perl -e '
-        sub blocks { local (@ARGV, $/) = (shift); grep { /\S/ } split /\n{2,}/, <> }
+        sub blocks {     # blank-line separated blocks; fenced code is kept whole
+            local @ARGV = shift;
+            my @b = (""); my ($f, $c);
+            while (<>) {
+                if (defined $f) { undef $f if /^ {0,3}\Q$f\E\Q$c\E*\h*$/ }
+                elsif (/^ {0,3}((`|~)\2{2,})/) { ($f, $c) = ($1, $2) }
+                elsif (/^\h*$/) { push @b, "" if $b[-1] ne ""; next }
+                $b[-1] .= $_;
+            }
+            map { s/\n+\z//r } grep { /\S/ } @b;
+        }
         my @l = blocks(shift); my @r = blocks(shift);
         my $n = @l > @r ? @l : @r;
         for my $i (0 .. $n - 1) {
@@ -124,7 +134,7 @@ if [[ $method == sdif ]]; then
           perl -pe 's/\e\[\d*K//g')
     if [[ $out ]]; then
         printf '%s msg=%s sdif %s lines\n' "$(date +%T)" "${msg:0:8}" "$(wc -l <<<"$out" | tr -d ' ')" >> "$log"
-        { printf '%s\n%s\n%s\n' '```text' "$out" '```'; [[ -s $post ]] && { echo; cat "$post"; }; } |
+        { printf '%s\n%s\n%s\n' '````text' "$out" '````'; [[ -s $post ]] && { echo; cat "$post"; }; } |
             jq -Rs '{hookSpecificOutput:{hookEventName:"MessageDisplay",displayContent:.}}'
     else
         jq -Rs '{hookSpecificOutput:{hookEventName:"MessageDisplay",displayContent:.}}' < "$md"
@@ -155,7 +165,7 @@ done
 if [[ ${out:-} ]]; then
     printf '%s msg=%s lines=%s page=%s pages=%s\n' "$(date +%T)" "${msg:0:8}" "$n" "$h" "$pages" >> "$log"
     # inside a code fence the Markdown renderer leaves the panes verbatim
-    { printf '%s\n%s\n%s\n' '```text' "$out" '```'; [[ -s $post ]] && { echo; cat "$post"; }; } |
+    { printf '%s\n%s\n%s\n' '````text' "$out" '````'; [[ -s $post ]] && { echo; cat "$post"; }; } |
         jq -Rs '{hookSpecificOutput:{hookEventName:"MessageDisplay",displayContent:.}}'
 else
     printf '%s msg=%s mdee failed, showing plain text\n' "$(date +%T)" "${msg:0:8}" >> "$log"

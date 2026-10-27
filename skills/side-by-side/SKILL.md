@@ -14,6 +14,16 @@ at the column width and drops the rest.  The tools below fold by display
 width with East Asian line-breaking rules (kinsoku), so both columns
 stay aligned whatever the script.
 
+## Quick start
+
+| Where the pair is shown | Do this |
+|---|---|
+| A terminal | `mdee -V -w "$(tput cols)" left.md right.md` (Markdown), or `ansicolumn -V -w "$(tput cols)" left.md right.md` (plain text) |
+| A Claude Code reply, with the hook set up | start the reply with `<!-- sxs -->`, then left text, `<!-- sxs -->`, right text ([below](#inside-a-claude-code-reply-in-color-the-messagedisplay-hook)) |
+| A reply in any other agent UI (or Claude Code without the hook) | run one of the commands with `NO_COLOR=1` and paste the output into a `~~~text` block ([below](#inside-a-reply-with-any-agent-plain-text-in-a-code-block)); for a few short pairs, a Markdown table |
+
+The rest of this file explains the choices and their limits.
+
 ## Choosing a method
 
 | You want | Use | Alignment |
@@ -101,13 +111,24 @@ Second paragraph.
 ```
 
 A few lines of Perl build this from two files, pairing the n-th
-blank-line separated block of one with the n-th of the other (the same
-function is inside the hook script below as `cm_join`):
+blank-line separated block of one with the n-th of the other; blank
+lines inside fenced code do not split a block (the same function is
+inside the hook script below as `cm_join`):
 
 ```sh
 cm_join() {
     perl -e '
-        sub blocks { local (@ARGV, $/) = (shift); grep { /\S/ } split /\n{2,}/, <> }
+        sub blocks {     # blank-line separated blocks; fenced code is kept whole
+            local @ARGV = shift;
+            my @b = (""); my ($f, $c);
+            while (<>) {
+                if (defined $f) { undef $f if /^ {0,3}\Q$f\E\Q$c\E*\h*$/ }
+                elsif (/^ {0,3}((`|~)\2{2,})/) { ($f, $c) = ($1, $2) }
+                elsif (/^\h*$/) { push @b, "" if $b[-1] ne ""; next }
+                $b[-1] .= $_;
+            }
+            map { s/\n+\z//r } grep { /\S/ } @b;
+        }
         my @l = blocks(shift); my @r = blocks(shift);
         my $n = @l > @r ? @l : @r;
         for my $i (0 .. $n - 1) {
@@ -123,8 +144,13 @@ cm_join en.md ja.md | sdif -V --no-filename --no-tc --no-cdif --mark=no -W "$(tp
   them means nothing.  Drop `--no-tc` to keep sdif's side coloring
 - `--mark=no`: no `-+`/`..` change-mark columns
 - `-W`: total width (both columns plus the gutter)
-- Blocks must correspond one to one; `cm_join` emits an unpaired block
-  on its own if the counts differ
+- Blocks must correspond one to one.  Pairing is by position only: if
+  one side has an extra paragraph, every block after it is paired with
+  the wrong one, and the last block is left without a partner.  When
+  you write both texts yourself (as in a reply), keep the same number
+  of paragraphs, headings, lists and code blocks on both sides; when
+  the texts come from elsewhere, check the counts first.  A table or a
+  list without blank lines inside is one block
 
 The same format comes out of `greple -Mxlate` (its default output is
 conflict markers, translation under original), of `diff3 -m`, and of a
@@ -290,6 +316,10 @@ English text in Markdown ...
 Optional note shown below the panes.
 ```
 
+For `<!-- sxs sdif -->`, write the two texts with the same block
+structure (see the one-to-one note under `cm_join` above), or the
+paragraphs will not line up.
+
 What the script does, and why (each point cost an experiment):
 
 - Claude Code calls the hook once per batch of completed lines, and the
@@ -300,7 +330,9 @@ What the script does, and why (each point cost an experiment):
 - `displayContent` **is interpreted as Markdown**.  The panes are
   wrapped in a code fence so widths survive, and mdee is told to draw
   no ``` marks (`--cm 'code_mark=sub{""}'`), because a fence inside a
-  pane swallows the layout up to the next one.
+  pane swallows the layout up to the next one.  The outer fence is four
+  backticks: in the nup and sdif layouts the text's own ``` lines stay,
+  and one with only spaces after it would close a three-backtick fence.
 - Text containing **`ESC[K` (Erase Line) is not displayed at all.**
   mdee runs with `ANSICOLOR_NO_RESET_EL=1`, and the remaining ones
   (explicit `E` in heading colors) are stripped.
