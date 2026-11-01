@@ -29,6 +29,11 @@
       "name": "sdif",
       "source": "./skills/sdif",
       "description": "Word-level and side-by-side diffs with cdif, sdif and watchdiff: check a corrected draft word by word, compare Japanese by MeCab word units, read git diff output, print the word marks as text for agents"
+    },
+    {
+      "name": "ansi-tools",
+      "source": "./skills/ansi-tools",
+      "description": "Align, fold, reflow and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn, ansifold (-r reflows paragraphs), ansiprintf, ansiecho and cat-v"
     }
   ]
 }

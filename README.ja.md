@@ -16,6 +16,7 @@ Copilot、Cursor、OpenCode など Agent Skills 対応のツール）に、こ�
 | [dozo](skills/dozo/SKILL.md) | [App::dozo](https://github.com/tecolicom/App-dozo) | プロジェクトが想定する Docker イメージの中で、リポジトリをマウントしパスを保ったままコマンドを実行する |
 | [side-by-side](skills/side-by-side/SKILL.md) | [App::ansicolumn](https://github.com/tecolicom/ANSI-Tools), [App::mdee](https://github.com/tecolicom/App-mdee), [App::sdif](https://github.com/kaz-utashiro/sdif-tools) | 2 つのテキスト（原文と訳文、2 つの版）を並べて表示する: ansicolumn -V、mdee -V、コンフリクトマーカーに対する sdif -V、行の対に対する cdif --lxl、エージェントの返信中のプレーンテキストや Markdown の表、Claude Code の返信中での MessageDisplay フックによる色付き表示 |
 | [sdif](skills/sdif/SKILL.md) | [App::sdif](https://github.com/kaz-utashiro/sdif-tools) | 単語単位の差分と並列表示の差分（cdif、sdif、watchdiff）: 添削された原稿を単語ごとに確認する、日本語を MeCab の単語単位で比較する、単語の差分マークをエージェント向けにテキストで出力する |
+| [ansi-tools](skills/ansi-tools/SKILL.md) | [App::ansicolumn, App::ansifold, App::ansiecho, Text::ANSI::Printf](https://github.com/tecolicom/ANSI-Tools) | ANSI の色や日本語を含むテキストを画面上の幅で揃える・折る・整形する: ansicolumn、ansifold（-r で段落を詰め直す）、ansiprintf、ansiecho、cat-v |
 
 各スキルは、対応するツールが CPAN または Homebrew でインストール済みで
 あることを前提にしています。
