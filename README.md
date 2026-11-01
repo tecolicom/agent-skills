@@ -69,6 +69,20 @@ plugins:
 /plugin install greple@tecolicom
 ```
 
+### Updating
+
+The skills carry no version numbers: every commit on `main` is the
+current release.  To get it, update the marketplace clone and then the
+installed plugins, and restart Claude Code:
+
+```
+/plugin marketplace update tecolicom
+/plugin update greple@tecolicom
+```
+
+A skill added since you installed is a new plugin:
+`/plugin install ansi-tools@tecolicom`.
+
 ### Other Agent Skills-compatible tools
 
 The `SKILL.md` files follow the [Agent Skills](https://agentskills.io)
@@ -123,6 +137,25 @@ Three kinds of features are deliberately left out:
 
 Every recipe in these skills is verified against the actual tools
 before being documented.
+
+## Maintaining
+
+- Verify every recipe against the installed tools before writing it
+  down, with the options that make it reproducible (`GREPLE_NORC=1`
+  for greple).  "Recipes (all verified)" is a promise
+- A new skill is `skills/NAME/SKILL.md` (frontmatter `name` and
+  `description`; the description is what makes an agent pick the
+  skill) plus `skills/NAME/.claude-plugin/plugin.json`, an entry in
+  `.claude-plugin/marketplace.json`, and a row in the tables of
+  `README.md` and `README.ja.md`.  Do not add version fields: they
+  were dropped so that new commits reach installed plugins
+- Pushing to `main` is the release.  Installed plugins pick the
+  commit up at their next update (see Updating)
+- For a milestone worth announcing, create a GitHub Release with a
+  calendar tag (`2026.11.01`; a second one on the same day is
+  `2026.11.01.1`), notes in English followed by Japanese after a
+  `---` line.  The releases are listed on
+  [www.tecoli.com/updates](https://www.tecoli.com/updates/)
 
 ## License
 

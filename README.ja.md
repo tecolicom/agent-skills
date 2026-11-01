@@ -73,6 +73,20 @@ dozo -B -q -D env HOME=/tmp sdif -W 160 old.md new.md
 /plugin install greple@tecolicom
 ```
 
+### 更新
+
+スキルにバージョン番号はなく、`main` の最新コミットが常に現行版です。
+取り込むには、マーケットプレイスのクローンを更新してからインストール
+済みのプラグインを更新し、Claude Code を再起動します。
+
+```
+/plugin marketplace update tecolicom
+/plugin update greple@tecolicom
+```
+
+インストール後に追加されたスキルは新しいプラグインとして入れます:
+`/plugin install ansi-tools@tecolicom`
+
 ### その他の Agent Skills 対応ツール
 
 `SKILL.md` は [Agent Skills](https://agentskills.io) のオープン標準に
@@ -124,6 +138,24 @@ OpenHands などがこの形式に対応しています。
 
 これらのスキルのレシピはすべて、文書化する前に実際のツールで検証して
 います。
+
+## 保守
+
+- レシピは書く前に、インストール済みのツールで必ず検証する。再現性の
+  ためのオプション（greple なら `GREPLE_NORC=1`）も含めて書く。
+  「Recipes (all verified)」は約束
+- 新しいスキルは `skills/NAME/SKILL.md`（frontmatter の `name` と
+  `description`。description でエージェントがスキルを選ぶ）と
+  `skills/NAME/.claude-plugin/plugin.json`、`.claude-plugin/marketplace.json`
+  への登録、`README.md` と `README.ja.md` の表への行の 4 点。version
+  フィールドは付けない（新しいコミットがインストール済みプラグインに
+  届くように外してある）
+- `main` への push がリリース。インストール済みのプラグインは次の更新
+  で取り込む（「更新」参照）
+- 告知する区切りでは GitHub Release を作る。タグはカレンダー版
+  （`2026.11.01`、同じ日の 2 つ目は `2026.11.01.1`）、ノートは英語の
+  後に `---` で区切って日本語。リリースは
+  [www.tecoli.com/updates](https://www.tecoli.com/updates/) に載る
 
 ## ライセンス
 
