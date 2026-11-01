@@ -1,6 +1,6 @@
 ---
 name: greple
-description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, phrase search across line breaks (prose and Japanese text), detecting invisible Unicode characters (zero-width, combining, bidi controls) when identical-looking strings fail to match, or searching/extracting text inside Office files (docx/xlsx/pptx). greple is a block-oriented grep with region control.
+description: Use when plain grep/ripgrep falls short while searching code or text - AND search for multiple keywords co-occurring in the same line/paragraph/function, showing the whole function or section containing a match (instead of grep-then-read round-trips), restricting search to comments/POD/code regions, phrase search across line breaks (prose and Japanese text), detecting invisible Unicode characters (zero-width, combining, bidi controls) when identical-looking strings fail to match, or searching/extracting text inside Office files (docx/xlsx/pptx), or piping only the matched regions of a file through an external command (-Mtee) to align or reformat them in place. greple is a block-oriented grep with region control.
 ---
 
 # greple — block-oriented grep
@@ -19,6 +19,8 @@ use it when it suffices.  greple wins in these situations:
 - **Phrase search across line breaks** — prose and Japanese text.
   ripgrep works line by line and misses phrases split across lines;
   greple finds them
+- **Transform only the matched regions** with an external command
+  (`-Mtee`): align or reformat part of a file and leave the rest as it is
 
 ## Prerequisites and caveats
 
@@ -244,6 +246,104 @@ GREPLE_NORC=1 greple -Mupdate 'colou?r' --cm 'sub{s/colou(r)/COLO_$1/r}' --diff 
 
 Preview with `--diff`, write with `--update` (`--with-backup` keeps a
 .bak copy).  Composes with region restriction (`-Mperl --comment` etc.).
+
+### Pipe only the matched regions through a command (-Mtee)
+
+When the transformation is a job for an existing command (aligning
+columns, reformatting, translating), `-Mtee` sends **only the matched
+regions** to that command and puts its output back in their place;
+the rest of the file passes through untouched.  Separately distributed
+module (`cpanm -n App::Greple::tee`; bundled with the Homebrew
+app-greple formula).
+
+```sh
+GREPLE_NORC=1 greple -Mtee CMD ARGS -- PATTERN --all FILE
+```
+
+- The words up to `--` are the command, so `-Mtee` comes **last** among
+  the `-M` options and greple's own options follow the `--`
+- `--all` prints the whole file, not just the matching lines
+- By default all regions go to the command in one run and the output
+  is distributed back by line count
+- A region need not be a whole line or end with a newline: a word or a
+  quoted string in the middle of a line is sent as a line of its own
+  (tee adds the newline and removes it from the output), so
+  `-E '"[^"]*"'` with `tr a-z A-Z` uppercases only the quoted
+  strings.  The command must give back as many lines as it got: fewer
+  is an error, more is a warning and the extra lines are dropped
+
+The options of the module go after the `--`, with greple's own
+(before it they would be arguments of the command):
+
+- `--discrete` runs the command once per region, for a command whose
+  output depends on the whole input or keeps state (`cat -n` numbers
+  every region from 1 with it, continuously without it)
+- `--crmode` turns the newlines inside a multi-line region into CRs on
+  the way in and the CRs of the output back into newlines, so that
+  multi-line regions can go through a line-oriented command in one
+  run.  `ansifold --crmode` understands this and folds each region as a
+  unit; this is how `mdee` folds list items:
+
+  ```sh
+  GREPLE_NORC=1 greple -Mtee ansifold -w30 --crmode -- --crmode -E '^- .*\n(?:  .*\n)*' --all FILE.md
+  ```
+
+- `--fillup` joins the lines of each region into one line first, with a
+  space between words and nothing between wide characters (Japanese),
+  for translation or reflow
+- `--squeeze` collapses runs of blank lines
+- `-S` (`--stretch`, a greple option) widens each match to the whole
+  line, so that a short pattern sends the lines that contain it:
+  `-S -E foo` (the module's own `--blocks` does the same and is legacy)
+- `-Mtee '&ansifold'`, `'&ansicolumn'` and `'&cat-v'` call the Perl
+  function instead of running the command; any `'&Full::Name::func'`
+  works.  It is cheaper with `--discrete`, which otherwise forks once
+  per region
+- The module follows [teip](https://github.com/greymd/teip)
+  (`teip -g PATTERN -- CMD`, `-o` for the matched part only), which is
+  faster for line-by-line work; greple adds the region (`--inside`,
+  `--block`), matches across lines and `--crmode`.  The ansi-tools
+  skill shows both on the same task
+
+Example — align the `key => value, # comment` lines of one hash with
+`ansicolumn -t` and leave everything else, including the indentation,
+as it is:
+
+```sh
+GREPLE_NORC=1 greple -Mtee ansicolumn -tl4 -o' ' -- \
+    --inside '(?s)Config->new\(.*?^\);' \
+    -E '(?<=^ {4})\w+ +=> (?!\{).*# .*\n' --all FILE.pm
+```
+
+- `--inside` limits the region to the one block, `-E` picks the lines of
+  that shape; `(?!\{)` skips a value that is a hash ref `{ ... }` (a
+  character class like `[^{\n]*` would also drop a value that merely
+  contains a brace, such as `"\x{b4}"`, and nothing tells you)
+- Check the selection before transforming: the same pattern with `-n`
+  and without `-Mtee` lists the lines that will be sent, so a line that
+  the pattern misses shows up before the result does
+- The lookbehind `(?<=^ {4})` starts the match **after** the indent, so
+  the indent is not sent to the command and stays in place.  Shape the
+  region boundaries this way whenever the command should see only part
+  of a line
+- `ansicolumn -l4` splits each line into at most 4 fields, so the
+  comment with its spaces stays one field
+
+To write the result back, add `-Mupdate` in front and `--diff` to
+preview, `--update` to replace the file:
+
+```sh
+GREPLE_NORC=1 greple -Mupdate -Mtee ansicolumn -tl4 -o' ' -- --diff   PATTERN FILE   # preview
+GREPLE_NORC=1 greple -Mupdate -Mtee ansicolumn -tl4 -o' ' -- --update PATTERN FILE   # write
+```
+
+`--update` with `-Mtee` needs App::Greple::update newer than 1.04:
+1.04 diverts STDOUT to an in-memory handle, the command's output is
+lost, and tee dies with `Unexpected short response`.  With 1.04,
+redirect the output to a new file and move it over the original
+(`... --all FILE > FILE.new && mv FILE.new FILE`).  The function form
+of the command (`-Mtee '&ansicolumn'`, which runs it in-process)
+additionally needs Command::Run newer than 1.04.
 
 ### Inspecting invisible and Unicode characters (-Mcharcode / -Mcc)
 
