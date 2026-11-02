@@ -305,29 +305,37 @@ The options of the module go after the `--`, with greple's own
   `--block`), matches across lines and `--crmode`.  The ansi-tools
   skill shows both on the same task
 
-Example — align the `key => value, # comment` lines of one hash with
-`ansicolumn -t` and leave everything else, including the indentation,
-as it is:
+Example — align the `key => value, # comment` lines of one declaration
+with `ansicolumn -t`, leaving everything else, the indent and the
+comments included, as it is:
 
 ```sh
-GREPLE_NORC=1 greple -Mtee ansicolumn -tl4 -o' ' -- \
-    --inside '(?s)Config->new\(.*?^\);' \
-    -E '(?<=^ {4})\w+ +=> (?!\{).*# .*\n' --all FILE.pm
+GREPLE_NORC=1 greple -Mtee ansicolumn -tl4 -o ' ' -- \
+    --block '^my \$config = (?s:.*?)^\);' \
+    -E '(?<=^    )\S+\h+=>\h+\S+\h+#' --cm=N FILE.pm
 ```
 
-- `--inside` limits the region to the one block, `-E` picks the lines of
-  that shape; `(?!\{)` skips a value that is a hash ref `{ ... }` (a
-  character class like `[^{\n]*` would also drop a value that merely
-  contains a brace, such as `"\x{b4}"`, and nothing tells you)
-- Check the selection before transforming: the same pattern with `-n`
-  and without `-Mtee` lists the lines that will be sent, so a line that
-  the pattern misses shows up before the result does
-- The lookbehind `(?<=^ {4})` starts the match **after** the indent, so
-  the indent is not sent to the command and stays in place.  Shape the
-  region boundaries this way whenever the command should see only part
-  of a line
-- `ansicolumn -l4` splits each line into at most 4 fields, so the
-  comment with its spaces stays one field
+- `-E` says what to align, positively: after the indent, a key, `=>`,
+  a value without spaces, and then `#`.  The region ends at the `#`, so
+  the comment never reaches the command and cannot be split into
+  columns, and a line of another shape (`hashed => { h1 => 0, ...`,
+  `(map { ... })`) does not match, so nothing has to be excluded.
+  Write the shape of the lines you want, with the literal parts (`=>`,
+  `#`) spelled out, rather than counting fields: `(\S+\h+){3}#` would
+  also match `(?<_bt> `++ )  #` elsewhere in the file
+- The lookbehind `(?<=^    )` starts the match **after** the indent, so
+  the indent is not sent to the command and stays in place.  A region
+  may end in the middle of a line, as this one does at the `#`: tee
+  adds the newline for the command and takes it off the output
+- `--block` makes the declaration the unit of output, so only the
+  aligned declaration is printed, which is what you want to look at.
+  Add `--all` to get the whole file with the declaration aligned in
+  it, for writing it back
+- Check the selection before transforming: the same patterns with
+  `-n -o` and without `-Mtee` list the regions that will be sent, so a
+  line the pattern misses shows up before the result does
+- `--cm=N` drops the color; `ansicolumn -l4` is a guard that keeps
+  anything after the third field in one column
 
 To write the result back, add `-Mupdate` in front and `--diff` to
 preview, `--update` to replace the file:

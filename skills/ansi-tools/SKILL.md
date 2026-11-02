@@ -99,13 +99,15 @@ few among others.  Two wrappers send only those to the command and
 leave the rest of the file as it is:
 
 ```sh
-# the key => value lines of one block, chosen by region (greple)
-GREPLE_NORC=1 greple -Mtee ansicolumn -tl4 -o' ' -- \
-    --inside '(?s)Config->new\(.*?^\);' \
-    -E '(?<=^ {4})\w+ +=> (?!\{).*# .*\n' --all FILE.pm
+# the key => value, # comment lines of one declaration, chosen by
+# region (greple); the region stops at the #, so the comment stays put
+GREPLE_NORC=1 greple -Mtee ansicolumn -tl4 -o ' ' -- \
+    --block '^my \$config = (?s:.*?)^\);' \
+    -E '(?<=^    )\S+\h+=>\h+\S+\h+#' --cm=N FILE.pm
 
-# the matched part of every matching line, anywhere in the file (teip)
-teip -og '\w+ +=> [^{].*# .*' -- ansicolumn -t -l4 -o' ' < FILE.pm
+# the same shape on every line of the file (teip has no region, so
+# lines of that shape elsewhere are aligned together with these)
+teip -og '\S+\s+=>\s+\S+\s+#' -- ansicolumn -t -o ' ' < FILE.pm
 
 # fold the list items only, each on its own (teip -s)
 teip -s -g '^- ' -- ansifold -w 72 -s --autoindent '^- ' < FILE.md
