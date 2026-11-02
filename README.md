@@ -14,7 +14,7 @@ to use these tools effectively.
 | [dozo](skills/dozo/SKILL.md) | [App::dozo](https://github.com/tecolicom/App-dozo) | Run commands inside the Docker image a project expects, with the repository mounted and paths preserved |
 | [side-by-side](skills/side-by-side/SKILL.md) | [App::ansicolumn](https://github.com/tecolicom/ANSI-Tools), [App::mdee](https://github.com/tecolicom/App-mdee), [App::sdif](https://github.com/kaz-utashiro/sdif-tools) | Show two texts next to each other (original/translation, two versions): ansicolumn -V, mdee -V, sdif -V on conflict markers, cdif --lxl on line pairs, plain text or a Markdown table in any agent's reply, or in color inside a Claude Code reply via a MessageDisplay hook |
 | [sdif](skills/sdif/SKILL.md) | [App::sdif](https://github.com/kaz-utashiro/sdif-tools) | Word-level and side-by-side diffs (cdif, sdif, watchdiff): check a corrected draft word by word, compare Japanese by MeCab word units, print the word marks as text for agents |
-| [ansi-tools](skills/ansi-tools/SKILL.md) | [App::ansicolumn, App::ansifold, App::ansiecho, Text::ANSI::Printf](https://github.com/tecolicom/ANSI-Tools) | Align, fold, reflow and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn, ansifold (-r reflows paragraphs), ansiprintf, ansiecho and cat-v |
+| [ansi-tools](skills/ansi-tools/SKILL.md) | [App::ansicolumn, App::ansifold, App::ansiecho, Text::ANSI::Printf](https://github.com/tecolicom/ANSI-Tools) | Align, fold, refill and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn, ansifold (-r refills paragraphs), ansiprintf, ansiecho and cat-v |
 
 Each skill assumes the corresponding tool is installed, via CPAN or
 Homebrew:

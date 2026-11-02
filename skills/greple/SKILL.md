@@ -290,7 +290,7 @@ The options of the module go after the `--`, with greple's own
 
 - `--fillup` joins the lines of each region into one line first, with a
   space between words and nothing between wide characters (Japanese),
-  for translation or reflow
+  for translation or refilling
 - `--squeeze` collapses runs of blank lines
 - `-S` (`--stretch`, a greple option) widens each match to the whole
   line, so that a short pattern sends the lines that contain it:

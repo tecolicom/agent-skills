@@ -1,6 +1,6 @@
 ---
 name: ansi-tools
-description: Use when text that contains ANSI color sequences or East Asian (Japanese, Chinese, Korean) characters has to be aligned into columns, wrapped or reflowed to a width, or printed with a fixed field width - a table that comes out ragged, a paragraph to fold for the terminal or a commit message, colored status lines of a script - where column, fold, fmt and printf miscount the width. ansicolumn, ansifold, ansiprintf and ansiecho measure the visible width (ANSI sequences count 0, wide characters 2) and break Japanese text by its rules; cat-v shows the invisible characters.
+description: Use when text that contains ANSI color sequences or East Asian (Japanese, Chinese, Korean) characters has to be aligned into columns, wrapped or refilled (reflowed) to a width, or printed with a fixed field width - a table that comes out ragged, a paragraph to fold for the terminal or a commit message, colored status lines of a script - where column, fold, fmt and printf miscount the width. ansicolumn, ansifold, ansiprintf and ansiecho measure the visible width (ANSI sequences count 0, wide characters 2) and break Japanese text by its rules; cat-v shows the invisible characters.
 ---
 
 # ansi-tools — column, fold and printf that see the screen width
@@ -65,11 +65,11 @@ To align a few lines inside a file and leave the rest as it is, see
 For two texts side by side (`-V`), pages and panes (`-C`, `-D`), see
 the side-by-side skill.
 
-### Fold or reflow text (`ansifold`)
+### Fold or refill text (`ansifold`)
 
 ```sh
 ansifold -w 72 -s FILE                 # fold at 72, word boundary, Japanese line breaking
-ansifold -r -w 72 -s FILE              # join each paragraph first, then fold (reflow)
+ansifold -r -w 72 -s FILE              # join each paragraph first, then fold (refill)
 ansifold -r -w 72 -s --autoindent '^[-*] ' FILE    # list items: continuation lines indented
 ```
 

@@ -1,6 +1,6 @@
 {
   "name": "ansi-tools",
-  "description": "Align, fold, reflow and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn (column -t that lines up colored and Japanese cells), ansifold (fold/fmt with word boundaries and Japanese line breaking, -r reflows paragraphs), ansiprintf and ansiecho (printf and echo with color and screen-width fields), cat-v (show tabs and control characters)",
+  "description": "Align, fold, refill and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn (column -t that lines up colored and Japanese cells), ansifold (fold/fmt with word boundaries and Japanese line breaking, -r refills paragraphs), ansiprintf and ansiecho (printf and echo with color and screen-width fields), cat-v (show tabs and control characters)",
   "author": {
     "name": "Kazumasa Utashiro",
     "email": "kaz@utashiro.com"

@@ -33,7 +33,7 @@
     {
       "name": "ansi-tools",
       "source": "./skills/ansi-tools",
-      "description": "Align, fold, reflow and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn, ansifold (-r reflows paragraphs), ansiprintf, ansiecho and cat-v"
+      "description": "Align, fold, refill and print text by its visible width when it has ANSI colors or East Asian characters: ansicolumn, ansifold (-r refills paragraphs), ansiprintf, ansiecho and cat-v"
     }
   ]
 }
